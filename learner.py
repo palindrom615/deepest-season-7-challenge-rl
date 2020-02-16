@@ -46,7 +46,7 @@ class CartPoleLearner:
         self.schema = DataSchema(
             names=["prev_state", "action", "reward", "state", "done"],
             shapes=[(self.input_size,), (1,), (1,), (self.input_size,), (1,)],
-            dtypes=[np.int64, np.int64, np.float32, np.float32, np.float32],
+            dtypes=[np.float32, np.int64, np.float32, np.float32, np.bool],
         )
 
         self.replay = Replay(100000, self.schema)
