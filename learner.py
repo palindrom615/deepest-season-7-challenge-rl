@@ -68,8 +68,8 @@ class CartPoleLearner:
         #tq = self.qnet(state)
         tq = self.qnet(state)
 
-        selected_q = torch.gather(q, dim=-1, index=action)
-        _, selected_tq = torch.max(tq, dim=-1, keepdim=True)
+        selected_q = torch.gather(q, 1, index=action)
+        selected_tq, _ = torch.max(tq, 1)
 
         target = reward + done * self.gamma * selected_tq.reshape((self.batch_size, 1))
 
