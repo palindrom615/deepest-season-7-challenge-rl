@@ -65,7 +65,8 @@ class CartPoleLearner:
         prev, action, reward, state, done = data
 
         q = self.qnet(prev)
-        tq = self.target_qnet(state)
+        #tq = self.qnet(state)
+        tq = self.qnet(state)
 
         selected_q = torch.gather(q, dim=-1, index=action)
         _, selected_tq = torch.max(tq, dim=-1, keepdim=True)
@@ -119,8 +120,8 @@ class CartPoleLearner:
                 self.replay.push(prev_state, action, reward, state, done)
                 prev_state = state
 
-            if episode % target_update_frequency == 0:
-                self.target_qnet.copy_params_(self.qnet)
+                # if frame % target_update_frequency == 0:
+                    # self.target_qnet.copy_params_(self.qnet)
 
             writer.add_scalar('EpisodeLength', step, frame)
             writer.add_scalar('Reward', episode_reward, frame)
