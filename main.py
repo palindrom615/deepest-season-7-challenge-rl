@@ -39,14 +39,15 @@ def main(args):
 
     if args.train:
         if args.resume:
-            learner.load(args.data_path, args.resume_episode)
+            learner.load(args.data_path)
         learner.train(
             target_update_frequency=args.target_update_frequency,
             max_frame=args.max_frame,
         )
+        learner.save(args.data_path)
     elif args.play:
         assert args.resume
-        learner.load(args.data_path, args.resume_episode)
+        learner.load(args.data_path)
         learner.play()
 
 

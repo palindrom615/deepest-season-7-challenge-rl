@@ -1,5 +1,6 @@
 import random
 
+import os
 import gym
 import numpy as np
 import torch
@@ -133,11 +134,31 @@ class CartPoleLearner:
             episode += 1
         pbar.close()
 
-    def save(self, data_path, episode):
-        raise NotImplementedError
+    def save(self, data_path):
+        torch.save(self.qnet.net.state_dict(), os.path.join(data_path, 'model.ckpt'))
+        torch.save(self.target_qnet.net.state_dict(), os.path.join(data_path, 'target_model.ckpt'))
+        torch.save(self.optimizer.state_dict(), os.path.join(data_path, 'optim.ckpt'))
+        torch.save(self.replay, os.path.join(data_path, 'replay.ckpt'))
 
-    def load(self, data_path, episode):
-        raise NotImplementedError
+    def load(self, data_path):
+        self.qnet.net.load_state_dict(torch.load(os.path.join(data_path, 'model.ckpt')))
+        self.target_qnet.net.load_state_dict(torch.load(os.path.join(data_path, 'target_model.ckpt')))
+        self.optimizer.load_state_dict(torch.load(os.path.join(data_path, 'optim.ckpt')))
+        self.replay = torch.load(os.path.join(data_path, 'replay.ckpt'))
 
     def play(self, num_episodes=10):
-        raise NotImplementedError
+        for episode in range(num_episodes):
+            state = self.env.reset()
+            episode_reward = 0
+            for step in range(1, 300):
+                s = torch.from_numpy(state).view(-1, self.input_size).float().to(self.device)
+
+                with torch.no_grad():
+                    action = self.qnet.get_greedy(s).item()
+
+                state, _, done, _ = self.env.step(action)
+
+                if done:
+                    break 
+                episode_reward += 1
+            print(f'ep {episode}: {episode_reward}')
