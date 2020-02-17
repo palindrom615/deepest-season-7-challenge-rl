@@ -114,11 +114,11 @@ class CartPoleLearner:
                 frame += 1
                 pbar.update(1)
 
-                if done:
-                    break
-
                 self.replay.push(prev_state, action, reward, state, done)
                 prev_state = state
+
+                if done:
+                    break
 
                 # if frame % target_update_frequency == 0:
                     # self.target_qnet.copy_params_(self.qnet)
