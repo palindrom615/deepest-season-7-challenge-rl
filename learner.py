@@ -71,7 +71,7 @@ class CartPoleLearner:
         selected_q = torch.gather(q, 1, index=action)
         selected_tq, _ = torch.max(tq, 1)
 
-        target = reward + done * self.gamma * selected_tq.reshape((self.batch_size, 1))
+        target = reward + ~done * self.gamma * selected_tq.reshape((n, 1))
 
         if self.loss_fn == 'L2':
             loss = F.mse_loss(selected_q, target)
